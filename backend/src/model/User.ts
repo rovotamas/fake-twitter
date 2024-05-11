@@ -5,6 +5,7 @@ const SALT_FACTOR = 10;
 
 interface IUser extends Document {
     email: string;
+    name: string;
     password: string;
     idAdmin: boolean;
     isActive: boolean;
@@ -14,8 +15,9 @@ interface IUser extends Document {
 
 const UserSchema: Schema<IUser> = new mongoose.Schema({
     email: { type: String, required: true },
+    name: { type: String, required: true },
     password: { type: String, required: true },
-    idAdmin: { type: Boolean, required: true },
+    idAdmin: { type: Boolean, required: false },
     birthDate: { type: Date, required: true },
     isActive: { type: Boolean, default: true },
 });
