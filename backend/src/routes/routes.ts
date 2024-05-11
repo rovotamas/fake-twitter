@@ -2,6 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { PassportStatic } from 'passport';
 import { User } from '../model/User';
 import bcrypt from 'bcrypt';
+import {Tweet} from '../model/Tweet';
 
 
 export const configureRoutes = (passport: PassportStatic, router: Router): Router => {
@@ -132,6 +133,164 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
                 });
         }
     });
+
+
+    router.get('/tweets', (req: Request, res: Response) => {
+        if(req.isAuthenticated()){
+            Tweet.find({})
+                .then((tweets) => {
+                    res.status(200).send(tweets);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    res.status(500).send('Internal server error.');
+                });
+        }
+    });
+
+    router.post('/tweets', (req: any, res) => {
+        if (!req.isAuthenticated()) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        const userId = req.user._id;
+
+        const newTweet = new Tweet({
+            user: userId,
+            liked: false,
+            countOfLikes: 0,
+            tweet: req.body.tweet,
+            comments: [],
+        });
+
+        newTweet.save()
+            .then((tweet) => {
+                res.status(201).send(tweet);
+            })
+            .catch((error) => {
+                console.error(error);
+                res.status(500).send('Internal server error.');
+            });
+    });
+
+    router.patch('/tweets/:tweetId/like', async (req: any, res) => {
+        if (!req.isAuthenticated()) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        const { tweetId } = req.params;
+        const userId = req.user._id;
+
+        try {
+            const tweet: any = await Tweet.findById(tweetId);
+            if (!tweet) {
+                return res.status(404).send('Tweet not found');
+            }
+
+            const userLiked = tweet.likedBy.includes(userId);
+
+            if (req.body.like && !userLiked) {
+                tweet.liked = true;
+                tweet.countOfLikes++;
+                tweet.likedBy.push(userId);
+            } else if (!req.body.like && userLiked) {
+                tweet.liked = false;
+                tweet.countOfLikes--;
+                tweet.likedBy = tweet.likedBy.filter((id: any) => id !== userId);
+            }
+
+            await tweet.save();
+
+            res.status(200).send(tweet);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal server error.');
+        }
+    });
+
+    router.post('/tweets/:tweetId/comments', async (req:any, res) => {
+        if (!req.isAuthenticated()) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        const { tweetId } = req.params;
+        const userId = req.user._id;
+        const { comment } = req.body;
+
+        try {
+            const tweet = await Tweet.findById(tweetId);
+            if (!tweet) {
+                return res.status(404).send('Tweet not found');
+            }
+
+            tweet.comments.push(comment);
+
+            await tweet.save();
+
+            res.status(201).send(tweet);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal server error.');
+        }
+    });
+
+    router.patch('/tweets/:tweetId', async (req:any, res) => {
+        if (!req.isAuthenticated()) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        const { tweetId } = req.params;
+        const userId = req.user._id;
+        const { tweet: updatedTweet } = req.body;
+
+        try {
+            const tweet = await Tweet.findById(tweetId);
+            if (!tweet) {
+                return res.status(404).send('Tweet not found');
+            }
+
+            if (tweet.user.toString() !== userId.toString()) {
+                return res.status(403).send('Forbidden');
+            }
+            tweet.tweet = updatedTweet;
+
+            await tweet.save();
+
+            res.status(200).send(tweet);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal server error.');
+        }
+    });
+
+    router.delete('/tweets/:tweetId', async (req:any, res) => {
+        if (!req.isAuthenticated()) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        const { tweetId } = req.params;
+        const userId = req.user._id;
+
+        try {
+            const tweet = await Tweet.findById(tweetId);
+            if (!tweet) {
+                return res.status(404).send('Tweet not found');
+            }
+
+            if (tweet.user.toString() !== userId.toString() && !req.user.isAdmin) {
+                return res.status(403).send('Forbidden');
+            }
+
+            await Tweet.findByIdAndDelete(tweetId);
+
+            res.status(204).send();
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal server error.');
+        }
+    });
+
+    module.exports = router;
 
     return router;
 }
