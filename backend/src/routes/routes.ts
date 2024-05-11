@@ -9,26 +9,54 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
 
 
 
-    router.post('/login', (req: Request, res: Response, next: NextFunction) => {
-        passport.authenticate('local', (error: string | null, user: typeof User) => {
+    router.post('/login', (req, res, next) => {
+        passport.authenticate('local', (error: any, user: any) => {
             if (error) {
-                console.log(error);
+                console.error(error);
                 res.status(500).send(error);
             } else {
                 if (!user) {
                     res.status(400).send('User not found.');
                 } else {
-                    req.login(user, (err: string | null) => {
-                        if (err) {
-                            console.log(err);
-                            res.status(500).send('Internal server error.');
-                        } else {
-                            res.status(200).send(user);
-                        }
-                    });
+                    if (!user.isActive) {
+                        res.status(403).send('User is not active.');
+                    } else {
+                        req.login(user, (err) => {
+                            if (err) {
+                                console.error(err);
+                                res.status(500).send('Internal server error.');
+                            } else {
+                                res.status(200).send(user);
+                            }
+                        });
+                    }
                 }
             }
         })(req, res, next);
+    });
+    router.patch('/users/:userId/activate', async (req: any, res) => {
+        if (!req.isAuthenticated() || !req.user.isAdmin) {
+            return res.status(401).send('Unauthorized');
+        }
+
+        const { userId } = req.params;
+        const { isActive } = req.body;
+
+        try {
+            const user = await User.findById(userId);
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+
+            user.isActive = isActive;
+
+            await user.save();
+
+            res.status(200).send('User status updated successfully');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal server error.');
+        }
     });
 
     router.post('/register', (req: Request, res: Response) => {

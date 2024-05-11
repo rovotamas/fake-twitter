@@ -7,6 +7,7 @@ interface IUser extends Document {
     email: string;
     password: string;
     idAdmin: boolean;
+    isActive: boolean;
     birthDate: Date;
     comparePassword: (candidatePassword: string, callback: (error: Error | null, isMatch: boolean) => void) => void;
 }
@@ -16,6 +17,7 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
     password: { type: String, required: true },
     idAdmin: { type: Boolean, required: true },
     birthDate: { type: Date, required: true },
+    isActive: { type: Boolean, default: true },
 });
 
 // hook
