@@ -5,6 +5,7 @@ export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'signup', loadComponent: () => import('./signup/signup.component').then((c) => c.SignupComponent) },
   { path: 'login', loadComponent: () => import('./login/login.component').then((c) => c.LoginComponent) },
-  { path: 'user-management', loadComponent: () => import('./user-management/user-management.component').then((c) => c.UserManagementComponent) },
+  { path: 'user-management', loadComponent: () => import('./user-management/user-management.component').then((c) => c.UserManagementComponent), canActivate: [authGuard] },
+  { path: 'tweet', loadComponent: () => import('./tweet/tweet.component').then((c) => c.TweetComponent), canActivate: [authGuard] },
   { path: '**', redirectTo: 'login' }
 ];

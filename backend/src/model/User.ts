@@ -7,7 +7,7 @@ export interface IUser extends Document {
     email: string;
     name: string;
     password: string;
-    idAdmin: boolean;
+    isAdmin: boolean;
     isActive: boolean;
     birthDate: Date;
     comparePassword: (candidatePassword: string, callback: (error: Error | null, isMatch: boolean) => void) => void;
@@ -17,7 +17,7 @@ const UserSchema: Schema<IUser> = new mongoose.Schema({
     email: { type: String, required: true },
     name: { type: String, required: false },
     password: { type: String, required: true },
-    idAdmin: { type: Boolean, required: true },
+    isAdmin: { type: Boolean, required: true },
     birthDate: { type: Date, required: false },
     isActive: { type: Boolean, default: true },
 });

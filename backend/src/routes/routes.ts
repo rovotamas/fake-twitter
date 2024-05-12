@@ -67,6 +67,14 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         }
     });
 
+    router.get('/checkAuth', (req: Request, res: Response) => {
+        if (req.isAuthenticated()) {
+            res.status(200).send(true);
+        } else {
+            res.status(500).send(false);
+        }
+    });
+
     router.post('/register', (req: Request, res: Response) => {
         const email = req.body.email;
         const name = req.body.name;
@@ -85,7 +93,7 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         const name = req.body.name;
         const birthDate = req.body.birthDate;
         const password = req.body.password;
-        const user = new User({email: email, password: password, birthDate: birthDate, name: name, isActive: true, idAdmin: true});
+        const user = new User({email: email, password: password, birthDate: birthDate, name: name, isActive: true, isAdmin: true});
         user.save().then(data => {
             res.status(200).send(data);
         }).catch(error => {
