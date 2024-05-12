@@ -15,7 +15,11 @@ const TweetSchema: Schema<ITweet> = new mongoose.Schema({
     liked: { type: Boolean, default: false },
     countOfLikes: { type: Number, default: 0 },
     tweet: { type: String, required: true },
-    comments: { type: [String], default: [] },
+    comments: [{
+        user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        comment: { type: String, required: true },
+        commentedAt: { type: Date, default: Date.now }
+    }]
 });
 
 export const Tweet: Model<ITweet> = mongoose.model<ITweet>('Tweet', TweetSchema);
