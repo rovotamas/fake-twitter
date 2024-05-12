@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { User } from '../model/User';
 import {Tweet} from '../model/Tweet';
 
 @Injectable({
@@ -11,7 +10,7 @@ export class TweetService {
   constructor(private http: HttpClient) { }
 
   getAll() {
-    return this.http.get<User[]>('http://localhost:5000/app/tweets', {withCredentials: true});
+    return this.http.get<Tweet[]>('http://localhost:5000/app/tweets', {withCredentials: true});
   }
 
   create(userId: string, tweet: string) {
