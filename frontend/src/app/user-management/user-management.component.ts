@@ -9,11 +9,13 @@ import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {DialogComponent} from '../shared/components/dialog/dialog.component';
 import {MatTableModule} from '@angular/material/table';
 import {MatIconModule} from '@angular/material/icon';
+import {SignupComponent} from '../signup/signup.component';
+import {SignupAdminComponent} from '../signup-admin/signup-admin.component';
 
 @Component({
   selector: 'app-user-management',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatIconModule,  MatDialogModule, MatSnackBarModule],
+  imports: [CommonModule, MatTableModule, MatIconModule, MatDialogModule, MatSnackBarModule, SignupComponent, SignupAdminComponent],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss'
 })

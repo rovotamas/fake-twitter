@@ -38,6 +38,21 @@ export class AuthService {
     return this.http.post('http://localhost:5000/app/register', body, {headers: headers});
   }
 
+  registerAdmin(user: User) {
+    // HTTP POST request
+    const body = new URLSearchParams();
+    body.set('email', user.email);
+    body.set('name', user.name);
+    body.set('password', user.password);
+    body.set('birthDate', user.birthDate);
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded'
+    });
+
+    return this.http.post('http://localhost:5000/app/register/admin', body, {headers: headers});
+  }
+
   logout() {
     return this.http.post('http://localhost:5000/app/logout', {}, {withCredentials: true, responseType: 'text'});
   }
