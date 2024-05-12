@@ -9,31 +9,28 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
 
 
 
-    router.post('/login', (req, res, next) => {
-        passport.authenticate('local', (error: any, user: any) => {
+    router.post('/login', (req: Request, res: Response, next: NextFunction) => {
+        passport.authenticate('local', (error: string | null, user: typeof User) => {
             if (error) {
-                console.error(error);
+                console.log(error);
                 res.status(500).send(error);
             } else {
                 if (!user) {
                     res.status(400).send('User not found.');
                 } else {
-                    if (!user.isActive) {
-                        res.status(403).send('User is not active.');
-                    } else {
-                        req.login(user, (err) => {
-                            if (err) {
-                                console.error(err);
-                                res.status(500).send('Internal server error.');
-                            } else {
-                                res.status(200).send(user);
-                            }
-                        });
-                    }
+                    req.login(user, (err: string | null) => {
+                        if (err) {
+                            console.log(err);
+                            res.status(500).send('Internal server error.');
+                        } else {
+                            res.status(200).send(user);
+                        }
+                    });
                 }
             }
         })(req, res, next);
     });
+
     router.patch('/users/:userId/activate', async (req: any, res) => {
         if (!req.isAuthenticated() || !req.user.isAdmin) {
             return res.status(401).send('Unauthorized');
@@ -151,16 +148,17 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
     });
 
     router.get('/users', (req: Request, res: Response) => {
-        if(req.isAuthenticated()){
-            User.find({})
-                .then((users) => {
-                    res.status(200).send(users);
-                })
-                .catch((error) => {
-                    console.error(error);
-                    res.status(500).send('Internal server error.');
-                });
-        }
+        User.find({})
+            .then((users) => {
+                res.status(200).send(users);
+            })
+            .catch((error) => {
+                console.error(error);
+                res.status(500).send('Internal server error.');
+            });
+        // if(req.isAuthenticated()){
+        //
+        // }
     });
 
 
