@@ -193,6 +193,7 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
             countOfLikes: 0,
             tweet: req.body.tweet,
             comments: [],
+            createdAt: new Date()
         });
 
         newTweet.save()
@@ -205,13 +206,13 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
             });
     });
 
-    router.patch('/tweets/:tweetId/like', async (req: any, res) => {
+    router.patch('/tweets/like', async (req: any, res) => {
         if (!req.isAuthenticated()) {
             return res.status(401).send('Unauthorized');
         }
 
-        const { tweetId } = req.params;
-        const userId = req.user._id;
+        const { tweetId } = req.body;
+        const {userId} = req.body;
 
         try {
             const tweet: any = await Tweet.findById(tweetId);
@@ -240,13 +241,12 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         }
     });
 
-    router.post('/tweets/:tweetId/comments', async (req:any, res) => {
+    router.post('/tweets/add/comment', async (req:any, res) => {
         if (!req.isAuthenticated()) {
             return res.status(401).send('Unauthorized');
         }
 
-        const { tweetId } = req.params;
-        const userId = req.user._id;
+        const { tweetId } = req.body;
         const { comment } = req.body;
 
         try {
@@ -266,13 +266,13 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         }
     });
 
-    router.patch('/tweets/:tweetId', async (req:any, res) => {
+    router.patch('/tweets/update/tweet', async (req:any, res) => {
         if (!req.isAuthenticated()) {
             return res.status(401).send('Unauthorized');
         }
 
-        const { tweetId } = req.params;
-        const userId = req.user._id;
+        const { tweetId } = req.body;
+        const {userId} = req.body;
         const { tweet: updatedTweet } = req.body;
 
         try {
@@ -295,16 +295,16 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         }
     });
 
-    router.delete('/tweets/:tweetId', async (req:any, res) => {
+    router.delete('/tweets', async (req:any, res) => {
         if (!req.isAuthenticated()) {
             return res.status(401).send('Unauthorized');
         }
 
-        const { tweetId } = req.params;
-        const userId = req.user._id;
+        const id = req.query.id;
+        const userId = req.query.userId
 
         try {
-            const tweet = await Tweet.findById(tweetId);
+            const tweet = await Tweet.findById({ _id: id });
             if (!tweet) {
                 return res.status(404).send('Tweet not found');
             }
@@ -313,7 +313,7 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
                 return res.status(403).send('Forbidden');
             }
 
-            await Tweet.findByIdAndDelete(tweetId);
+            await Tweet.findByIdAndDelete({ _id: id });
 
             res.status(204).send();
         } catch (error) {
