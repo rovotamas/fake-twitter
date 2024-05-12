@@ -1,0 +1,32 @@
+<div *ngFor="let tweet of tweets">
+  <div class="tweet">
+    <p>{{ tweet.tweet }}</p>
+    <p>Author: {{ tweet.user }}</p>
+    <p>Likes: {{ tweet.countOfLikes }}</p>
+    <p>Comments:</p>
+    <ul>
+      <li *ngFor="let comment of tweet.comments">{{ comment.user }}: {{ comment.comment }}</li>
+    </ul>
+    <button (click)="toggleLike(tweet)">Like</button>
+    <button (click)="editTweet(tweet)">Edit</button>
+    <button (click)="deleteTweet(tweet)">Delete</button>
+  </div>
+</div>
+
+<div>
+  <label for="newTweet">New Tweet:</label>
+  <input type="text" id="newTweet" [(ngModel)]="newTweet" name="newTweet">
+  <button (click)="createTweet()">Create</button>
+</div>
+
+<div *ngIf="editingTweet">
+  <label for="editedTweet">Edit Tweet:</label>
+  <input type="text" id="editedTweet" [(ngModel)]="editedTweet" name="editedTweet">
+  <button (click)="saveEditedTweet()">Save</button>
+</div>
+
+<div *ngIf="deletingTweet">
+  <p>Are you sure you want to delete this tweet?</p>
+  <button (click)="confirmDelete()">Yes</button>
+  <button (click)="cancelDelete()">No</button>
+</div>
