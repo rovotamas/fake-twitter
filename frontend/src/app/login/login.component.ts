@@ -3,11 +3,12 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import {AuthService} from '../shared/services/auth.service';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, RouterModule],
+  imports: [FormsModule, CommonModule, RouterModule, MatProgressSpinnerModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -15,6 +16,7 @@ export class LoginComponent {
   email: string = '';
   password: string = '';
   errorMessage: string = '';
+  isLoading = false;
 
   constructor(private router: Router, private authService: AuthService) { }
 
@@ -22,7 +24,7 @@ export class LoginComponent {
     if (this.email && this.password) {
       this.errorMessage = '';
       this.authService.login(this.email, this.password).subscribe({
-        next: (data) => {
+        next: (data: any) => {
           if (data) {
             // navigation
             console.log(data);
