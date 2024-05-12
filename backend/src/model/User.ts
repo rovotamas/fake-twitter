@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 const SALT_FACTOR = 10;
 
-interface IUser extends Document {
+export interface IUser extends Document {
     email: string;
     name: string;
     password: string;

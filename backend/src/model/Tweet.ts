@@ -1,4 +1,5 @@
 import mongoose, { Document, Model, ObjectId, Schema } from 'mongoose';
+import {IUser} from './User';
 
 interface ITweet extends Document {
     user: ObjectId;
@@ -6,7 +7,12 @@ interface ITweet extends Document {
     countOfLikes: number;
     likedBy: ObjectId;
     tweet: string;
-    comments: string[];
+    comments: Array<{
+        user: IUser['_id'];
+        comment: string;
+        commentedAt: Date;
+    }>;
+    createdAt: Date;
 }
 
 const TweetSchema: Schema<ITweet> = new mongoose.Schema({
@@ -19,7 +25,8 @@ const TweetSchema: Schema<ITweet> = new mongoose.Schema({
         user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         comment: { type: String, required: true },
         commentedAt: { type: Date, default: Date.now }
-    }]
+    }],
+    createdAt: { type: Date, default: Date.now }
 });
 
 export const Tweet: Model<ITweet> = mongoose.model<ITweet>('Tweet', TweetSchema);
