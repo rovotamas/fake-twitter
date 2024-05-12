@@ -28,7 +28,10 @@ export class LoginComponent {
           if (data) {
             // navigation
             console.log(data);
-            this.router.navigateByUrl('/user-management');
+            if(data.isAdmin) {
+              this.router.navigateByUrl('/user-management');
+            }
+
           }
         }, error: (err) => {
           console.log(err);
