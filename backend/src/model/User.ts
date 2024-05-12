@@ -15,10 +15,10 @@ interface IUser extends Document {
 
 const UserSchema: Schema<IUser> = new mongoose.Schema({
     email: { type: String, required: true },
-    name: { type: String, required: true },
+    name: { type: String, required: false },
     password: { type: String, required: true },
     idAdmin: { type: Boolean, required: false },
-    birthDate: { type: Date, required: true },
+    birthDate: { type: Date, required: false },
     isActive: { type: Boolean, default: true },
 });
 

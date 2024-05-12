@@ -1,7 +1,8 @@
 export interface User {
-    email: string;
-    name: string;
-    address: string;
-    nickname: string;
-    password: string;
+  email: string;
+  name: string;
+  password: string;
+  idAdmin: boolean;
+  isActive: boolean;
+  birthDate: string;
 }

@@ -27,7 +27,9 @@ export class AuthService {
     // HTTP POST request
     const body = new URLSearchParams();
     body.set('email', user.email);
+    body.set('name', user.name);
     body.set('password', user.password);
+    body.set('birthDate', user.birthDate);
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/x-www-form-urlencoded'
