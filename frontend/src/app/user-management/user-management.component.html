@@ -11,6 +11,21 @@
       <td mat-cell *matCellDef="let element">{{element.name}}</td>
     </ng-container>
 
+    <ng-container matColumnDef="birthDate">
+      <th mat-header-cell *matHeaderCellDef>Birth Date</th>
+      <td mat-cell *matCellDef="let element">{{element.birthDate}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="isActive">
+      <th mat-header-cell *matHeaderCellDef>Is Active</th>
+      <td mat-cell *matCellDef="let element">{{element.isActive}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="update">
+      <th mat-header-cell *matHeaderCellDef>UpdateIsActive</th>
+      <td mat-cell *matCellDef="let element; let i = index"><mat-icon fontIcon="update" (click)="updateUser(element._id, i)"></mat-icon></td>
+    </ng-container>
+
     <ng-container matColumnDef="delete">
       <th mat-header-cell *matHeaderCellDef>Delete</th>
       <td mat-cell *matCellDef="let element; let i = index"><mat-icon fontIcon="delete" (click)="deleteUser(element._id, i)"></mat-icon></td>

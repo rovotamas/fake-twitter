@@ -11,6 +11,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatIconModule} from '@angular/material/icon';
 import {SignupComponent} from '../signup/signup.component';
 import {SignupAdminComponent} from '../signup-admin/signup-admin.component';
+import {DialogUpdateComponent} from '../shared/components/dialog-update-user/dialog-update.component';
 
 @Component({
   selector: 'app-user-management',
@@ -21,7 +22,7 @@ import {SignupAdminComponent} from '../signup-admin/signup-admin.component';
 })
 export class UserManagementComponent {
   users!: User[];
-  columns = ['email', 'name', 'delete'];
+  columns = ['email', 'name', 'birthDate', 'isActive', 'update', 'delete'];
 
   constructor(
     private userService: UserService,
@@ -46,6 +47,31 @@ export class UserManagementComponent {
       next: (data) => {
         console.log(data);
         this.router.navigateByUrl('/login');
+      }, error: (err) => {
+        console.log(err);
+      }
+    })
+  }
+
+  updateUser(id: string, n: number) {
+    const dialogRef = this.dialog.open(DialogUpdateComponent);
+
+    dialogRef.afterClosed().subscribe({
+      next: (data) => {
+        if (data) {
+          // user deletion
+          console.log(data);
+          this.userService.updateUserIsActive(id).subscribe({
+            next: (data) => {
+              console.log(data);
+              this.users?.splice(n, 1);
+              this.users = [...this.users];
+              this.openSnackBar('User updated successfully.', 3000);
+            }, error: (err) => {
+              console.log(err);
+            }
+          });
+        }
       }, error: (err) => {
         console.log(err);
       }

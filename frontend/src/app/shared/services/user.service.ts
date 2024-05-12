@@ -16,4 +16,8 @@ export class UserService {
   delete(id: string) {
     return this.http.delete('http://localhost:5000/app/deleteUser?id=' + id, {withCredentials: true});
   }
+
+  updateUserIsActive(id: string) {
+    return this.http.patch('http://localhost:5000/app/users/activate?id=' + id, {withCredentials: true});
+  }
 }

@@ -31,28 +31,39 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         })(req, res, next);
     });
 
-    router.patch('/users/:userId/activate', async (req: any, res) => {
-        if (!req.isAuthenticated() || !req.user.isAdmin) {
-            return res.status(401).send('Unauthorized');
-        }
+    router.patch('/users/activate', async (req: any, res) => {
 
-        const { userId } = req.params;
-        const { isActive } = req.body;
 
-        try {
-            const user = await User.findById(userId);
-            if (!user) {
-                return res.status(404).send('User not found');
+            const id = req.query.id;
+            try {
+                const user = await User.findById({_id: id});
+                if (!user) {
+                    return res.status(404).send('User not found');
+                }
+
+                user.isActive = !user.isActive;
+
+                await user.save();
+
+                res.status(200).send('User status updated successfully');
+            } catch (error) {
+                console.error(error);
+                res.status(500).send('Internal server error.');
             }
+        });
 
-            user.isActive = isActive;
-
-            await user.save();
-
-            res.status(200).send('User status updated successfully');
-        } catch (error) {
-            console.error(error);
-            res.status(500).send('Internal server error.');
+    router.delete('/deleteUser', (req: Request, res: Response) => {
+        if (req.isAuthenticated()) {
+            const id = req.query.id;
+            const query = User.deleteOne({_id: id});
+            query.then(data => {
+                res.status(200).send(data);
+            }).catch(error => {
+                console.log(error);
+                res.status(500).send('Internal server error.');
+            })
+        } else {
+            res.status(500).send('User is not logged in.');
         }
     });
 
@@ -96,20 +107,7 @@ export const configureRoutes = (passport: PassportStatic, router: Router): Route
         }
     });
 
-    router.delete('/deleteUser', (req: Request, res: Response) => {
-        if (req.isAuthenticated()) {
-            const id = req.query.id;
-            const query = User.deleteOne({_id: id});
-            query.then(data => {
-                res.status(200).send(data);
-            }).catch(error => {
-                console.log(error);
-                res.status(500).send('Internal server error.');
-            })
-        } else {
-            res.status(500).send('User is not logged in.');
-        }
-    });
+
 
     router.patch('/user/update/:email', async (req: Request, res: Response) => {
         if (req.isAuthenticated()) {
